@@ -1,0 +1,402 @@
+<Window x:Class="Squeaker.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Squeaker" Width="1100" Height="760" MinWidth="980" MinHeight="620"
+        Background="{DynamicResource Bg}" WindowStartupLocation="CenterScreen"
+        FontFamily="{StaticResource UiFont}" Foreground="{DynamicResource Text}" UseLayoutRounding="True" SnapsToDevicePixels="True"
+        TextOptions.TextFormattingMode="Display">
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="40" ResizeBorderThickness="6" GlassFrameThickness="0,0,0,1" CornerRadius="0" UseAeroCaptionButtons="False"/>
+    </WindowChrome.WindowChrome>
+
+    <Grid x:Name="Root" Background="{DynamicResource Bg}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="240"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <!-- ============ Sidebar ============ -->
+        <Border Background="{DynamicResource Sidebar}" BorderBrush="{DynamicResource Separator}" BorderThickness="0,0,1,0">
+            <DockPanel Margin="12,0,12,16">
+                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="8,50,0,26">
+                    <Image x:Name="AppIcon" Width="42" Height="42" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <StackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="Squeaker" FontSize="18" FontWeight="SemiBold" FontFamily="{StaticResource DisplayFont}"/>
+                        <TextBlock Text="Cursor studio" FontSize="12" Foreground="{DynamicResource Text2}" Margin="0,1,0,0"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <Border DockPanel.Dock="Bottom" CornerRadius="10" Background="{DynamicResource Hover}" Padding="12,10">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse x:Name="StatusDot" Width="8" Height="8" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="StatusText" Margin="8,0,0,0" FontSize="12" FontWeight="SemiBold"/>
+                        </StackPanel>
+                        <TextBlock x:Name="StatusDetail" FontSize="11.5" Foreground="{DynamicResource Text2}" Margin="16,3,0,0" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+                <TextBlock x:Name="VersionText" DockPanel.Dock="Bottom" FontSize="11" Foreground="{DynamicResource Text3}" Margin="10,0,0,10"/>
+
+                <StackPanel>
+                    <RadioButton x:Name="NavLook" Style="{StaticResource Nav}" Tag="&#xE790;" Background="#FF9F0A" Content="Appearance" IsChecked="True" Checked="Nav_Checked"/>
+                    <RadioButton x:Name="NavCustom" Style="{StaticResource Nav}" Tag="&#xE8B9;" Background="#AF52DE" Content="Custom Cursors" Checked="Nav_Checked"/>
+                    <RadioButton x:Name="NavEffects" Style="{StaticResource Nav}" Tag="&#xE945;" Background="#FF375F" Content="Click Effects" Checked="Nav_Checked"/>
+                    <RadioButton x:Name="NavPointer" Style="{StaticResource Nav}" Tag="&#xE962;" Background="#0A84FF" Content="Pointer Options" Checked="Nav_Checked"/>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- ============ Content ============ -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
+                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" WindowChrome.IsHitTestVisibleInChrome="True">
+                <Button Style="{StaticResource Caption}" Content="&#xE921;" Click="Min_Click" ToolTip="Minimize"/>
+                <Button x:Name="MaxButton" Style="{StaticResource Caption}" Content="&#xE922;" Click="Max_Click" ToolTip="Maximize"/>
+                <Button Style="{StaticResource CloseCaption}" Content="&#xE8BB;" Click="Close_Click" ToolTip="Close"/>
+            </StackPanel>
+
+            <ScrollViewer x:Name="Scroller" Grid.Row="1" VerticalScrollBarVisibility="Auto" Focusable="False">
+                <Grid Margin="44,0,44,36" MaxWidth="820" HorizontalAlignment="Stretch">
+
+                    <!-- ===== Appearance ===== -->
+                    <StackPanel x:Name="PageLook">
+                        <TextBlock Style="{StaticResource H1}" Text="Appearance"/>
+                        <TextBlock Style="{StaticResource Sub}" Margin="0,6,0,0" Text="Choose a style, colors and size. Everything previews here first, and Apply puts it to work across Windows."/>
+
+                        <Border Style="{StaticResource CardBox}" Margin="0,24,0,0">
+                            <StackPanel>
+                                <Border x:Name="Stage" CornerRadius="11,11,0,0" Background="{DynamicResource Stage}" Height="236" MouseLeftButtonDown="Stage_Click" MouseRightButtonDown="Stage_Click">
+                                    <Grid>
+                                        <Image x:Name="StageArrow" Stretch="Fill" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,18"/>
+                                        <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,16,20,0">
+                                            <TextBlock x:Name="StageSize" FontSize="26" FontWeight="SemiBold" FontFamily="{StaticResource DisplayFont}" HorizontalAlignment="Right"/>
+                                            <TextBlock x:Name="StageStyle" FontSize="12" Foreground="{DynamicResource Text2}" HorizontalAlignment="Right"/>
+                                        </StackPanel>
+                                        <TextBlock x:Name="StageHint" FontSize="12" Foreground="{DynamicResource Text2}"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,14"/>
+                                    </Grid>
+                                </Border>
+                                <Border Height="1" Background="{DynamicResource Separator}"/>
+                                <ItemsControl x:Name="RoleStrip" Margin="10,10,10,10">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+
+                        <TextBlock Style="{StaticResource SectionLabel}" Text="Style"/>
+                        <Border Style="{StaticResource CardBox}" Padding="10">
+                            <WrapPanel x:Name="StylePanel"/>
+                        </Border>
+
+                        <TextBlock Style="{StaticResource SectionLabel}" Text="Colors"/>
+                        <Border Style="{StaticResource CardBox}">
+                            <StackPanel>
+                                <Grid Margin="16,12">
+                                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Style="{StaticResource RowTitle}" Text="Fill"/>
+                                        <TextBlock Style="{StaticResource RowHint}" Text="Top and bottom. Pick two different colors for a gradient."/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Button x:Name="FillTopWell" Style="{StaticResource Well}" Click="Well_Click" Tag="FillTop" ToolTip="Top"/>
+                                        <TextBlock Text="&#xE76C;" FontFamily="{StaticResource Glyphs}" FontSize="10" Foreground="{DynamicResource Text3}" VerticalAlignment="Center" Margin="8,0"/>
+                                        <Button x:Name="FillBottomWell" Style="{StaticResource Well}" Click="Well_Click" Tag="FillBottom" ToolTip="Bottom"/>
+                                    </StackPanel>
+                                </Grid>
+                                <Border Style="{StaticResource Divider}"/>
+                                <Grid Margin="16,12">
+                                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Style="{StaticResource RowTitle}" Text="Outline"/>
+                                        <TextBlock Style="{StaticResource RowHint}" Text="The edge that keeps the pointer visible on any background."/>
+                                    </StackPanel>
+                                    <Button Grid.Column="1" x:Name="OutlineWell" Style="{StaticResource Well}" Click="Well_Click" Tag="Outline" VerticalAlignment="Center"/>
+                                </Grid>
+                                <Border Style="{StaticResource Divider}"/>
+                                <Grid Margin="16,12">
+                                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Style="{StaticResource RowTitle}" Text="Accent"/>
+                                        <TextBlock Style="{StaticResource RowHint}" Text="Colors the spinning ring on the busy pointers."/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Button x:Name="AccentReset" Style="{StaticResource Link}" Content="Use Windows blue" Click="AccentReset_Click" Margin="0,0,10,0"/>
+                                        <Button x:Name="AccentWell" Style="{StaticResource Well}" Click="Well_Click" Tag="Accent"/>
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <TextBlock Style="{StaticResource SectionLabel}" Text="Size"/>
+                        <Border Style="{StaticResource CardBox}" Padding="16,14">
+                            <StackPanel>
+                                <DockPanel>
+                                    <TextBlock x:Name="SizeValue" DockPanel.Dock="Right" FontSize="13" Foreground="{DynamicResource Text2}"/>
+                                    <TextBlock Style="{StaticResource RowTitle}" Text="Pointer size"/>
+                                </DockPanel>
+                                <Grid Margin="0,10,0,0">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                    <Path Data="{StaticResource ArrowGlyph}" Fill="{DynamicResource Text2}" Stretch="Uniform" Height="11" VerticalAlignment="Center"/>
+                                    <Slider x:Name="SizeSlider" Grid.Column="1" Margin="12,0" Minimum="32" Maximum="256" TickFrequency="8" IsSnapToTickEnabled="True" ValueChanged="SizeSlider_Changed"/>
+                                    <Path Grid.Column="2" Data="{StaticResource ArrowGlyph}" Fill="{DynamicResource Text2}" Stretch="Uniform" Height="20" VerticalAlignment="Center"/>
+                                </Grid>
+                                <StackPanel x:Name="SizeChips" Orientation="Horizontal" Margin="0,12,0,0"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- ===== Custom cursors ===== -->
+                    <StackPanel x:Name="PageCustom" Visibility="Collapsed">
+                        <TextBlock Style="{StaticResource H1}" Text="Custom Cursors"/>
+                        <TextBlock Style="{StaticResource Sub}" Margin="0,6,0,0" Text="Use your own pictures or cursor files for any pointer, or bring in a whole cursor pack from the web."/>
+
+                        <Border Style="{StaticResource CardBox}" Margin="0,24,0,0">
+                            <Grid Height="452">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="256"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <ListBox x:Name="RoleList" Background="Transparent" BorderThickness="0" Margin="8" ItemContainerStyle="{StaticResource RoleItem}"
+                                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="RoleList_Changed"/>
+                                <Border Grid.Column="1" Width="1" Background="{DynamicResource Separator}"/>
+                                <StackPanel Grid.Column="2" Margin="28,24,28,20">
+                                    <TextBlock x:Name="RoleTitle" FontSize="20" FontWeight="SemiBold" FontFamily="{StaticResource DisplayFont}"/>
+                                    <TextBlock x:Name="RoleSource" Style="{StaticResource Sub}" Margin="0,4,0,0"/>
+                                    <Border x:Name="HotBox" Width="184" Height="184" CornerRadius="14" Background="{DynamicResource Checker}" HorizontalAlignment="Left"
+                                            BorderBrush="{DynamicResource CardBorder}" BorderThickness="1" Margin="0,18,0,0" MouseLeftButtonDown="HotBox_Click" Cursor="Cross">
+                                        <Grid Margin="12">
+                                            <Image x:Name="RolePreview" Stretch="Uniform" RenderOptions.BitmapScalingMode="HighQuality"/>
+                                            <Canvas x:Name="HotCanvas" IsHitTestVisible="False">
+                                                <Grid x:Name="HotMark" Width="18" Height="18">
+                                                    <Ellipse Stroke="White" StrokeThickness="4"/>
+                                                    <Ellipse Stroke="{DynamicResource Accent}" StrokeThickness="2"/>
+                                                    <Ellipse Width="4" Height="4" Fill="{DynamicResource Accent}"/>
+                                                </Grid>
+                                            </Canvas>
+                                        </Grid>
+                                    </Border>
+                                    <TextBlock x:Name="HotHint" Style="{StaticResource RowHint}" Margin="0,10,0,0" Text="Click the picture to set the hotspot, the exact point that clicks."/>
+                                    <WrapPanel Margin="0,18,0,0">
+                                        <Button Style="{StaticResource Primary}" Content="Choose File…" Click="ChooseFile_Click"/>
+                                        <Button x:Name="UseStyleButton" Style="{StaticResource Secondary}" Content="Use Style" Margin="8,0,0,0" Click="UseStyle_Click"/>
+                                    </WrapPanel>
+                                    <Grid Margin="0,18,0,0">
+                                        <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Style="{StaticResource RowTitle}" Text="Tint with style colors"/>
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Works best on black-and-white pictures."/>
+                                        </StackPanel>
+                                        <CheckBox x:Name="TintSwitch" Grid.Column="1" Style="{StaticResource Switch}" Click="Tint_Click"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <TextBlock Style="{StaticResource SectionLabel}" Text="From the web"/>
+                        <Border Style="{StaticResource CardBox}" Padding="16,14">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource RowTitle}" Text="Import from a link"/>
+                                <TextBlock Style="{StaticResource RowHint}" Text="Paste a link to a picture, a .cur or .ani file, or a .zip cursor pack. Single files go to the pointer selected above; packs fill in every pointer they include."/>
+                                <DockPanel Margin="0,12,0,0">
+                                    <Button x:Name="ImportUrlButton" DockPanel.Dock="Right" Style="{StaticResource Primary}" Content="Import" Margin="8,0,0,0" Click="ImportUrl_Click"/>
+                                    <TextBox x:Name="UrlBox" Tag="https://" KeyDown="UrlBox_KeyDown"/>
+                                </DockPanel>
+                                <TextBlock x:Name="ImportStatus" Style="{StaticResource RowHint}" Margin="0,8,0,0" Visibility="Collapsed"/>
+                                <Border Height="1" Background="{DynamicResource Separator}" Margin="0,14"/>
+                                <WrapPanel>
+                                    <Button Style="{StaticResource Secondary}" Content="Import Pack from File…" Click="ImportPackFile_Click"/>
+                                    <Button Style="{StaticResource Link}" Content="Find cursor packs online  ↗" Margin="12,0,0,0" Click="Browse_Click"/>
+                                    <Button Style="{StaticResource Link}" Content="Reset every pointer to the style" Margin="4,0,0,0" Click="ResetAll_Click"/>
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- ===== Click effects ===== -->
+                    <StackPanel x:Name="PageEffects" Visibility="Collapsed">
+                        <TextBlock Style="{StaticResource H1}" Text="Click Effects"/>
+                        <TextBlock Style="{StaticResource Sub}" Margin="0,6,0,0" Text="A small flourish wherever you click. Great for demos and screen recordings, and for keeping track of your pointer."/>
+
+                        <Border Style="{StaticResource CardBox}" Margin="0,24,0,0">
+                            <Grid Margin="16,14">
+                                <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource RowTitle}" Text="Show click effects" FontWeight="SemiBold"/>
+                                    <TextBlock Style="{StaticResource RowHint}" Text="Works in every app. Squeaker keeps running in the tray while this is on."/>
+                                </StackPanel>
+                                <CheckBox x:Name="EffectsSwitch" Grid.Column="1" Style="{StaticResource Switch}" Click="EffectsSwitch_Click"/>
+                            </Grid>
+                        </Border>
+
+                        <TextBlock Style="{StaticResource SectionLabel}" Text="Effect"/>
+                        <Border Style="{StaticResource CardBox}" Padding="10">
+                            <WrapPanel x:Name="EffectKinds"/>
+                        </Border>
+
+                        <TextBlock Style="{StaticResource SectionLabel}" Text="Look and feel"/>
+                        <Border Style="{StaticResource CardBox}">
+                            <StackPanel>
+                                <Grid Margin="16,12">
+                                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                    <TextBlock Style="{StaticResource RowTitle}" Text="Left click" VerticalAlignment="Center"/>
+                                    <Button Grid.Column="1" x:Name="LeftWell" Style="{StaticResource Well}" Click="Well_Click" Tag="LeftColor"/>
+                                </Grid>
+                                <Border Style="{StaticResource Divider}"/>
+                                <Grid Margin="16,12">
+                                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                    <TextBlock Style="{StaticResource RowTitle}" Text="Right click" VerticalAlignment="Center"/>
+                                    <Button Grid.Column="1" x:Name="RightWell" Style="{StaticResource Well}" Click="Well_Click" Tag="RightColor" Margin="0,0,14,0"/>
+                                    <CheckBox Grid.Column="2" x:Name="RightSwitch" Style="{StaticResource Switch}" Click="EffectOption_Click" ToolTip="Show effects for right clicks too"/>
+                                </Grid>
+                                <Border Style="{StaticResource Divider}"/>
+                                <Grid Margin="16,12">
+                                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="300"/><ColumnDefinition Width="64"/></Grid.ColumnDefinitions>
+                                    <TextBlock Style="{StaticResource RowTitle}" Text="Size" VerticalAlignment="Center"/>
+                                    <Slider Grid.Column="1" x:Name="EffectSize" Minimum="24" Maximum="160" TickFrequency="4" IsSnapToTickEnabled="True" ValueChanged="EffectSlider_Changed"/>
+                                    <TextBlock Grid.Column="2" x:Name="EffectSizeText" Foreground="{DynamicResource Text2}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                </Grid>
+                                <Border Style="{StaticResource Divider}"/>
+                                <Grid Margin="16,12">
+                                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="300"/><ColumnDefinition Width="64"/></Grid.ColumnDefinitions>
+                                    <TextBlock Style="{StaticResource RowTitle}" Text="Duration" VerticalAlignment="Center"/>
+                                    <Slider Grid.Column="1" x:Name="EffectDuration" Minimum="200" Maximum="1200" TickFrequency="50" IsSnapToTickEnabled="True" ValueChanged="EffectSlider_Changed"/>
+                                    <TextBlock Grid.Column="2" x:Name="EffectDurationText" Foreground="{DynamicResource Text2}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                </Grid>
+                                <Border Style="{StaticResource Divider}"/>
+                                <Grid Margin="16,12">
+                                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource RowTitle}" Text="Squeak on click"/>
+                                        <TextBlock Style="{StaticResource RowHint}" Text="A tiny squeak with every click. It's in the name."/>
+                                    </StackPanel>
+                                    <CheckBox Grid.Column="1" x:Name="SqueakSwitch" Style="{StaticResource Switch}" Click="EffectOption_Click"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <TextBlock Style="{StaticResource SectionLabel}" Text="Try it"/>
+                        <Border x:Name="TryPad" Style="{StaticResource CardBox}" Height="160" Background="{DynamicResource Stage}" MouseLeftButtonDown="TryPad_Click" MouseRightButtonDown="TryPad_Click">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False">
+                                <TextBlock Text="&#xE962;" FontFamily="{StaticResource Glyphs}" FontSize="22" Foreground="{DynamicResource Text3}" HorizontalAlignment="Center"/>
+                                <TextBlock x:Name="TryHint" FontSize="13" Foreground="{DynamicResource Text2}" Margin="0,8,0,0" TextAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- ===== Pointer options ===== -->
+                    <StackPanel x:Name="PagePointer" Visibility="Collapsed">
+                        <TextBlock Style="{StaticResource H1}" Text="Pointer Options"/>
+                        <TextBlock Style="{StaticResource Sub}" Margin="0,6,0,0" Text="Windows' own pointer settings, gathered in one place. Changes take effect immediately."/>
+
+                        <TextBlock Style="{StaticResource SectionLabel}" Text="Movement"/>
+                        <Border Style="{StaticResource CardBox}">
+                            <StackPanel>
+                                <Grid Margin="16,12">
+                                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="40"/><ColumnDefinition Width="260"/><ColumnDefinition Width="40"/></Grid.ColumnDefinitions>
+                                    <TextBlock Style="{StaticResource RowTitle}" Text="Tracking speed" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="Slow" FontSize="11.5" Foreground="{DynamicResource Text2}" VerticalAlignment="Center"/>
+                                    <Slider Grid.Column="2" x:Name="SpeedSlider" Minimum="1" Maximum="20" TickFrequency="1" IsSnapToTickEnabled="True" ValueChanged="Pointer_Changed"/>
+                                    <TextBlock Grid.Column="3" Text="Fast" FontSize="11.5" Foreground="{DynamicResource Text2}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                                <Border Style="{StaticResource Divider}"/>
+                                <Grid Margin="16,12">
+                                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource RowTitle}" Text="Enhance pointer precision"/>
+                                        <TextBlock Style="{StaticResource RowHint}" Text="Moves further when you move the mouse quickly. Gamers often turn this off."/>
+                                    </StackPanel>
+                                    <CheckBox Grid.Column="1" x:Name="PrecisionSwitch" Style="{StaticResource Switch}" Click="Pointer_Changed"/>
+                                </Grid>
+                                <Border Style="{StaticResource Divider}"/>
+                                <Grid Margin="16,12">
+                                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource RowTitle}" Text="Snap to the default button"/>
+                                        <TextBlock Style="{StaticResource RowHint}" Text="Jumps the pointer to OK or Yes when a dialog opens."/>
+                                    </StackPanel>
+                                    <CheckBox Grid.Column="1" x:Name="SnapSwitch" Style="{StaticResource Switch}" Click="Pointer_Changed"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <TextBlock Style="{StaticResource SectionLabel}" Text="Visibility"/>
+                        <Border Style="{StaticResource CardBox}">
+                            <StackPanel>
+                                <Grid Margin="16,12">
+                                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource RowTitle}" Text="Pointer trails"/>
+                                        <TextBlock Style="{StaticResource RowHint}" Text="Leaves a short trail of ghost pointers behind."/>
+                                    </StackPanel>
+                                    <CheckBox Grid.Column="1" x:Name="TrailsSwitch" Style="{StaticResource Switch}" Click="Pointer_Changed"/>
+                                </Grid>
+                                <Grid x:Name="TrailsRow" Margin="16,0,16,12">
+                                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="44"/><ColumnDefinition Width="260"/><ColumnDefinition Width="40"/></Grid.ColumnDefinitions>
+                                    <TextBlock Style="{StaticResource RowHint}" Text="Trail length" VerticalAlignment="Center" Margin="0"/>
+                                    <TextBlock Grid.Column="1" Text="Short" FontSize="11.5" Foreground="{DynamicResource Text2}" VerticalAlignment="Center"/>
+                                    <Slider Grid.Column="2" x:Name="TrailsSlider" Minimum="2" Maximum="12" TickFrequency="1" IsSnapToTickEnabled="True" ValueChanged="Pointer_Changed"/>
+                                    <TextBlock Grid.Column="3" Text="Long" FontSize="11.5" Foreground="{DynamicResource Text2}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                                <Border Style="{StaticResource Divider}"/>
+                                <Grid Margin="16,12">
+                                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                    <TextBlock Style="{StaticResource RowTitle}" Text="Pointer shadow" VerticalAlignment="Center"/>
+                                    <CheckBox Grid.Column="1" x:Name="ShadowSwitch" Style="{StaticResource Switch}" Click="Pointer_Changed"/>
+                                </Grid>
+                                <Border Style="{StaticResource Divider}"/>
+                                <Grid Margin="16,12">
+                                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource RowTitle}" Text="Show where the pointer is when I press Ctrl"/>
+                                        <TextBlock Style="{StaticResource RowHint}" Text="Draws shrinking circles around the pointer."/>
+                                    </StackPanel>
+                                    <CheckBox Grid.Column="1" x:Name="SonarSwitch" Style="{StaticResource Switch}" Click="Pointer_Changed"/>
+                                </Grid>
+                                <Border Style="{StaticResource Divider}"/>
+                                <Grid Margin="16,12">
+                                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                    <TextBlock Style="{StaticResource RowTitle}" Text="Hide the pointer while typing" VerticalAlignment="Center"/>
+                                    <CheckBox Grid.Column="1" x:Name="VanishSwitch" Style="{StaticResource Switch}" Click="Pointer_Changed"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <TextBlock Style="{StaticResource SectionLabel}" Text="Squeaker"/>
+                        <Border Style="{StaticResource CardBox}">
+                            <Grid Margin="16,12">
+                                <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource RowTitle}" Text="Open at sign-in"/>
+                                    <TextBlock Style="{StaticResource RowHint}" Text="Starts quietly in the tray so click effects are always ready. Your cursor look stays applied either way."/>
+                                </StackPanel>
+                                <CheckBox Grid.Column="1" x:Name="StartupSwitch" Style="{StaticResource Switch}" Click="Startup_Click"/>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </ScrollViewer>
+
+            <!-- ===== Action bar ===== -->
+            <Border x:Name="ActionBar" Grid.Row="2" BorderBrush="{DynamicResource Separator}" BorderThickness="0,1,0,0" Padding="44,14">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                        <Button Style="{StaticResource Secondary}" Content="Restore Windows Cursors" Click="Restore_Click"/>
+                        <Button x:Name="ApplyButton" Style="{StaticResource Primary}" Content="Apply" Margin="10,0,0,0" MinWidth="96" Click="Apply_Click"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Ellipse x:Name="DirtyDot" Width="7" Height="7" Fill="{DynamicResource Accent}" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="ActionHint" FontSize="12.5" Foreground="{DynamicResource Text2}" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>
